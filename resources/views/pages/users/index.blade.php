@@ -8,39 +8,47 @@ use App\Helpers\Page;
 new class extends Component {
     use Toast;
 
-    public string $search = '';
+    public string $search = "";
 
     public bool $drawer = false;
 
-    public array $sortBy = ['column' => 'name', 'direction' => 'asc'];
+    public array $sortBy = ["column" => "name", "direction" => "asc"];
     public function viewPage($id): void
     {
-        $selectedPage = $this->pages()->firstWhere('id', $id);
+        $selectedPage = $this->pages()->firstWhere("id", $id);
         if ($selectedPage) {
-            $this->redirect(route($selectedPage['route'], $selectedPage));
+            $this->redirect(route($selectedPage["route"], $selectedPage));
         }
     }
     // Clear filters
     public function clear(): void
     {
         $this->reset();
-        $this->success('Filters cleared.', position: 'toast-bottom');
+        $this->success("Filters cleared.", position: "toast-bottom");
     }
 
     // Delete action
     public function delete($id): void
     {
-        $this->warning("Will delete #$id", 'It is fake.', position: 'toast-bottom');
+        $this->warning(
+            "Will delete #$id",
+            "It is fake.",
+            position: "toast-bottom",
+        );
     }
 
     // Table headers
     public function headers(): array
     {
         return [
-            ['key' => 'id', 'label' => '#', 'class' => 'w-1'],
-            ['key' => 'title', 'label' => 'Title', 'class' => 'w-64'],
-            ['key' => 'description', 'label' => 'Description', 'class' => 'w-64'],
-            ['key' => 'author', 'label' => 'Author', 'class' => 'w-20'],
+            ["key" => "id", "label" => "#", "class" => "w-1"],
+            ["key" => "title", "label" => "Title", "class" => "w-64"],
+            [
+                "key" => "description",
+                "label" => "Description",
+                "class" => "w-64",
+            ],
+            ["key" => "author", "label" => "Author", "class" => "w-20"],
         ];
     }
 
@@ -52,47 +60,60 @@ new class extends Component {
      */
     public function pages(): Collection
     {
-    $pages = [
-           new Page(
-               title: "Tutorial Leaflet",
-               description: "Pengaturan dasar leaflet yang membahas tentang cara pemasangan dan pengaturan tampilan vektor seperti titik, garis, dan bahkan poligon",
-               author: "Imbang",
-               route: "map.leaflet-basics",
-               category: "tutorial",
-           ),
-
-       ];
-        return collect($pages)->map(fn(Page $page) => [
-
-            'title' => $page->title,
-            'description' => $page->description,
-            'author' => $page->author,
-            'route' => $page->route,
-            'category' => $page->category,
-        ])->values()->map(function (array $item, int $index) {
-                $item['id'] = $index + 1;
+        $pages = [
+            new Page(
+                title: "Visualisasi Choropleth",
+                description: "Menggunakan data geospasial untuk memvisualisasikan distribusi data di wilayah tertentu",
+                author: "Imbang",
+                route: "map.choropleth",
+                category: "showcase",
+            ),
+            new Page(
+                title: "Tutorial Leaflet",
+                description: "Pengaturan dasar leaflet yang membahas tentang cara pemasangan dan pengaturan tampilan vektor seperti titik, garis, dan bahkan poligon",
+                author: "Imbang",
+                route: "map.leaflet-basics",
+                category: "tutorial",
+            ),
+        ];
+        return collect($pages)
+            ->map(
+                fn(Page $page) => [
+                    "title" => $page->title,
+                    "description" => $page->description,
+                    "author" => $page->author,
+                    "route" => $page->route,
+                    "category" => $page->category,
+                ],
+            )
+            ->values()
+            ->map(function (array $item, int $index) {
+                $item["id"] = $index + 1;
                 return $item;
-            })->sortBy([[...array_values($this->sortBy)]])
+            })
+            ->sortBy([[...array_values($this->sortBy)]])
             ->when($this->search, function (Collection $collection) {
                 $search = strtolower($this->search);
-                return $collection->filter(fn(array $item) => str($item['title'])->contains($search, true)
-                || str($item['description'])->contains($search, true)
-                || str($item['author'])->contains($search, true)
-                || str($item['category'])->contains($search, true));
-
-
+                return $collection->filter(
+                    fn(array $item) => str($item["title"])->contains(
+                        $search,
+                        true,
+                    ) ||
+                        str($item["description"])->contains($search, true) ||
+                        str($item["author"])->contains($search, true) ||
+                        str($item["category"])->contains($search, true),
+                );
             });
     }
 
     public function with(): array
     {
         return [
-            'pages' => $this->pages(),
-            'headers' => $this->headers()
+            "pages" => $this->pages(),
+            "headers" => $this->headers(),
         ];
     }
 };
-
 ?>
 
 <div>
