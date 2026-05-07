@@ -128,7 +128,7 @@ new class extends Component {
         shadow
         class="hover:shadow-xl transition-shadow duration-300 bg-base-100"
         title="Choropleth Map"
-        subtitle="Peta Kemiskinan Provinsi/Kabupaten"
+        subtitle="Peta informatif"
     >
 
         <div class="flex flex-col gap-1">
@@ -177,7 +177,6 @@ new class extends Component {
         };
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Populate category dropdown
             const categorySelect = document.getElementById('indicator-select');
             Object.entries(config.categories).forEach(([key, label]) => {
                 const option = document.createElement('option');
@@ -187,7 +186,6 @@ new class extends Component {
                 categorySelect.appendChild(option);
             });
 
-            // Populate year dropdown
             const yearSelect = document.getElementById('year-select');
             config.years.forEach(year => {
                 const option = document.createElement('option');
@@ -196,8 +194,6 @@ new class extends Component {
                 if (year === config.selectedYear) option.selected = true;
                 yearSelect.appendChild(option);
             });
-
-            // Event listeners
             categorySelect.addEventListener('change', () => {
                 config.selectedCategory = categorySelect.value;
                 console.log(`Selected category: ${config.selectedCategory}`);
@@ -274,8 +270,8 @@ new class extends Component {
             const stepSize = (maxVal - minVal) / steps;
 
             let indicatorLabel = config.categories[indicator] || indicator;
-            let html = `<div style="margin-bottom: 5px;"><strong>${indicatorLabel} - ${year}</strong></div>`;
-            html += `<div style="font-size: 10px; color: #666; margin-bottom: 8px;">Min: ${minVal.toFixed(2)} | Max: ${maxVal.toFixed(2)}</div>`;
+            let html = `<div style="margin-bottom: 8px;"><strong style="color: #1a1a1a; font-size: 13px;">${indicatorLabel} - ${year}</strong></div>`;
+            html += `<div style="font-size: 11px; color: #444; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px;">Min: ${minVal.toFixed(2)} | Max: ${maxVal.toFixed(2)}</div>`;
 
             for (let i = 0; i <= steps; i++) {
                 const value = minVal + (stepSize * i);
@@ -314,7 +310,7 @@ new class extends Component {
             const minVal = values.length > 0 ? Math.min(...values) : 0;
             const maxVal = values.length > 0 ? Math.max(...values) : 100;
 
-    
+
             updateLegend(indicator, year, values);
 
             // Update layer styles
@@ -355,7 +351,7 @@ new class extends Component {
                     const year = config.selectedYear;
                     const value = getValue(feature, indicator, year);
 
-                    // Default color 
+                    // Default color
                     let color = '#cccccc';
 
                     if (value !== null && value !== undefined && value !== 0) {
@@ -437,8 +433,6 @@ new class extends Component {
             // Update legend
             const values = getAllValues(config.selectedCategory, config.selectedYear);
             updateLegend(config.selectedCategory, config.selectedYear, values);
-
-            // Fit map bounds
             try {
                 map.fitBounds(currentLayer.getBounds());
             } catch(e) {
